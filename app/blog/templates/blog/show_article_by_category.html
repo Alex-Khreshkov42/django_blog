@@ -1,0 +1,120 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+
+{% block nav-item %}
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'all_articles' %}">All articles</a>
+    <span class="sr-only">(current)</span>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'about' %}">About Us</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+</li>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-banner header-text">
+    <div class="container-fluid">
+    </div>
+</div>
+
+<section class="blog-posts grid-system">
+    <hr>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="all-blog-posts">
+                    <div class="row">
+                        {% for article in articles %}
+                        <div class="col-lg-6">
+                            <div class="blog-post">
+                                <div class="blog-thumb">
+                                    <img src="{{ article.photo.url }}" alt="">
+                                </div>
+                                <div class="down-content">
+                                    <span>{{article.category}}</span>
+                                    <a href="{{ article.get_abs_url_article }}"><h4>{{article.title}}</h4></a>
+                                    <ul class="post-info">
+                                        <li>{{ article.author }}</li>
+                                        <li>{{ article.creation_date }}</li>
+                                        <li>12 Comments</li>
+                                    </ul>
+                                    <p>{{ article.content|linebreaksbr|truncatewords:20 }}</p>
+                                    <div class="post-options">
+                                        <div class="row">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% if page_obj.has_other_pages %}
+                        <div class="col-lg-12">
+                            <ul class="page-numbers">
+                                {% if page_obj.has_previous %}
+                                <li><a href="?page={{page_obj.previous_page_number}}"><i
+                                        class="fa fa-angle-double-left"></i></a></li>
+                                {% endif %}
+                                {% for p in page_obj.paginator.page_range %}
+                                {% if page_obj.number == p %}
+                                <li class="active"><a href="?page={{ p }}">{{ p }} </a></li>
+                                {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+                                <li><a href="?page={{ p }}">{{ p }} </a></li>
+                                {% endif %}
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                <li><a href="?page={{page_obj.next_page_number}}"><i
+                                        class="fa fa-angle-double-right"></i></a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="sidebar">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="sidebar-item categories">
+                                <div class="sidebar-heading">
+                                    <h2>Categories</h2>
+                                </div>
+                                <div class="content">
+                                    {% for category in categories%}
+                                    <ul>
+                                        <li><a href="{{ category.get_abs_url_category }}">-{{ category.name|upper }}</a>
+                                        </li>
+                                    </ul>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="sidebar-item tags">
+                                <div class="sidebar-heading">
+                                    <h2>Tag Clouds</h2>
+                                </div>
+                                <div class="content">
+                                    <ul>
+                                        {% for tag in tags %}
+                                        <li><a href="{{ tag.get_abs_url_tag }}">{{ tag.name|upper }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
